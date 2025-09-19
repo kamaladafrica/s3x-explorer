@@ -7,7 +7,7 @@ export interface S3Config {
   secretAccessKey: string;
   forcePathStyle: boolean;
   maxPreviewSizeBytes: number;
-  allowHttp: boolean;
+  allowHttp?: boolean;
 }
 
 export interface S3Object {

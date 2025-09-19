@@ -45,7 +45,7 @@ export function validateConfig(config: S3Config): string[] {
   return errors;
 }
 
-function isValidUrl(url: string, allowHttp: boolean): boolean {
+function isValidUrl(url: string, allowHttp: boolean = false): boolean {
   try {
     const parsed = new URL(url);
     return parsed.protocol === "https:" || (allowHttp && parsed.protocol === "http:");
