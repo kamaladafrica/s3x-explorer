@@ -15,6 +15,7 @@ export function getConfig(): S3Config {
     secretAccessKey: config.get<string>("secretAccessKey", ""),
     forcePathStyle: config.get<boolean>("forcePathStyle", true),
     maxPreviewSizeBytes: config.get<number>("maxPreviewSizeBytes", 10485760),
+    allowHttp: config.get<boolean>("allowHttp", false),
   };
 }
 
@@ -33,17 +34,17 @@ export function validateConfig(config: S3Config): string[] {
     errors.push("Secret Access Key is required");
   }
 
-  if (config.endpointUrl && !isValidUrl(config.endpointUrl)) {
+  if (config.endpointUrl && !isValidUrl(config.endpointUrl, config.allowHttp)) {
     errors.push("Endpoint URL must be a valid HTTPS URL");
   }
 
   return errors;
 }
 
-function isValidUrl(url: string): boolean {
+function isValidUrl(url: string, allowHttp: boolean): boolean {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === "https:";
+    return parsed.protocol === "https:" || (allowHttp && parsed.protocol === "http:");
   } catch {
     return false;
   }

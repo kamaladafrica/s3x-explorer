@@ -34,6 +34,11 @@
     "configuration": {
       "title": "S3/R2 Explorer",
       "properties": {
+        "s3x.allowHttp": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allows HTTP (no TLS). Dangerous — use only in dev on trusted networks; may expose data and credentials."
+        },
         "s3x.endpointUrl": {
           "type": "string",
           "default": "",
