@@ -6,7 +6,6 @@ export interface TestConfig {
   secretAccessKey: string;
   region: string;
   testBucketPrefix: string;
-  allowHttp?: boolean;
 }
 
 /**
@@ -20,7 +19,6 @@ export function getTestConfig(): TestConfig {
     secretAccessKey: process.env.S3X_SECRET_ACCESS_KEY || "",
     region: process.env.S3X_REGION || "us-east-1",
     testBucketPrefix: "s3x-test-ci",
-    allowHttp: false,
   };
 }
 
