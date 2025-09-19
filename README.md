@@ -68,9 +68,16 @@ Open VS Code settings (`Ctrl/Cmd + ,`) and configure:
   "s3x.region": "us-east-1",
 
   // Optional: Max file size for direct editing (default: 10MB)
-  "s3x.maxPreviewSizeBytes": 10485760
+  "s3x.maxPreviewSizeBytes": 10485760,
+  
+  // Optional: Explicitly allow insecure HTTP endpoints (NOT recommended for production, default: false)
+  "s3x.allowHttp": false  
 }
 ```
+
+⚠️ **Warning**:  
+The `s3x.allowHttp` option is intended **only for development or test environments on trusted networks**.  
+Never enable this option in production, as it allows unencrypted HTTP connections and may expose sensitive data.
 
 ### 3. Open the Explorer
 
@@ -170,16 +177,20 @@ https://<account-id>.<jurisdiction>.r2.cloudflarestorage.com
 
 ## ⚙️ Configuration Reference
 
-| Setting                   | Description                | Default       | R2 Required |
-| ------------------------- | -------------------------- | ------------- | ----------- |
-| `s3x.endpointUrl`         | S3-compatible endpoint URL | `""`          | ✅          |
-| `s3x.accessKeyId`         | Access Key ID              | `""`          | ✅          |
-| `s3x.secretAccessKey`     | Secret Access Key          | `""`          | ✅          |
-| `s3x.forcePathStyle`      | Use path-style URLs        | `true`        | ✅          |
-| `s3x.region`              | AWS region for SigV4       | `"us-east-1"` | ⚠️          |
-| `s3x.maxPreviewSizeBytes` | Max file size for editing  | `10485760`    | ❌          |
+| Setting                   | Description                                        | Default       | R2 Required |
+| ------------------------- | -------------------------------------------------- | ------------- | ----------- |
+| `s3x.endpointUrl`         | S3-compatible endpoint URL                         | `""`          | ✅           |
+| `s3x.accessKeyId`         | Access Key ID                                      | `""`          | ✅           |
+| `s3x.secretAccessKey`     | Secret Access Key                                  | `""`          | ✅           |
+| `s3x.forcePathStyle`      | Use path-style URLs                                | `true`        | ✅           |
+| `s3x.region`              | AWS region for SigV4                               | `"us-east-1"` | ⚠️          |
+| `s3x.maxPreviewSizeBytes` | Max file size for editing                          | `10485760`    | ❌           |
+| `s3x.allowHttp`           | Allow insecure HTTP connections (development only) | `false`       | ❌           |
 
-⚠️ **Note**: R2 works with any region, but `us-east-1` is recommended.
+⚠️ **Note**:
+
+- R2 works with any region, but `us-east-1` is recommended.
+- `s3x.allowHttp` should only be enabled in trusted **development/test environments**, never in production.
 
 ## 🔧 Commands
 
@@ -218,6 +229,7 @@ https://<account-id>.<jurisdiction>.r2.cloudflarestorage.com
 - **Token Rotation**: Regularly rotate API tokens
 - **Endpoint Verification**: Ensure endpoint URLs are correct
 - **HTTPS Only**: Extension enforces HTTPS for security
+- **Insecure Mode**: If `s3x.allowHttp` is enabled, connections will use plain HTTP. This should only be done on trusted internal networks for development or testing.
 
 ## 🛠️ Development
 
@@ -294,6 +306,11 @@ Run the built-in smoke test:
 - **Check URL format**: Must be `https://account.jurisdiction.r2.cloudflarestorage.com`
 - **Check network**: Verify internet connectivity
 - **Check firewall**: Ensure HTTPS traffic is allowed
+- **If using HTTP**:
+
+  * Ensure the endpoint starts with `http://`
+  * Set `"s3x.allowHttp": true` in your configuration
+  * Only use in trusted development/test networks
 
 #### "Files not opening"
 
