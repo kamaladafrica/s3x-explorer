@@ -35,7 +35,11 @@ export function validateConfig(config: S3Config): string[] {
   }
 
   if (config.endpointUrl && !isValidUrl(config.endpointUrl, config.allowHttp)) {
-    errors.push("Endpoint URL must be a valid HTTPS URL");
+    errors.push(
+      config.allowHttp
+        ? "Endpoint URL must be a valid HTTP or HTTPS URL"
+        : "Endpoint URL must be a valid HTTPS URL (set s3x.allowHttp=true to allow HTTP)"
+    );
   }
 
   return errors;
