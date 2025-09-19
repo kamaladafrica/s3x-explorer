@@ -34,6 +34,7 @@ suite("S3 Client Tests", () => {
     assert.strictEqual(config.region, testConfig.region);
     assert.strictEqual(config.forcePathStyle, true);
     assert.strictEqual(config.maxPreviewSizeBytes, 10485760);
+    assert.strictEqual(config.allowHttp, testConfig.allowHttp);
   });
 
   test("validateConfig validates required fields", () => {
@@ -42,9 +43,10 @@ suite("S3 Client Tests", () => {
       endpointUrl: "https://example.r2.cloudflarestorage.com",
       region: "us-east-1",
       accessKeyId: "test-access-key",
-      secretAccessKey: "test-secret-key", 
+      secretAccessKey: "test-secret-key",
       forcePathStyle: true,
-      maxPreviewSizeBytes: 10485760
+      maxPreviewSizeBytes: 10485760,
+      allowHttp: false
     };
     const validErrors = validateConfig(validConfig);
     assert.strictEqual(validErrors.length, 0);
@@ -68,6 +70,28 @@ suite("S3 Client Tests", () => {
     const invalidUrlConfig = { ...validConfig, endpointUrl: "not-a-url" };
     const urlErrors = validateConfig(invalidUrlConfig);
     assert.ok(urlErrors.some((err) => err.includes("valid HTTPS URL")));
+
+    // HTTP URL with allowHttp = false should return error
+    const httpDisallowedConfig = {
+      ...validConfig,
+      endpointUrl: "http://minio.local:9000",
+      allowHttp: false
+    };
+    const httpDisallowedErrors = validateConfig(httpDisallowedConfig);
+    assert.ok(httpDisallowedErrors.some((err) => err.includes("valid HTTPS URL")));
+
+    // HTTP URL with allowHttp = true should be valid
+    const httpAllowedConfig = {
+      ...validConfig,
+      endpointUrl: "http://minio.local:9000",
+      allowHttp: true
+    };
+    const httpAllowedErrors = validateConfig(httpAllowedConfig);
+    assert.strictEqual(
+      httpAllowedErrors.length,
+      0,
+      "HTTP should be allowed when allowHttp is true"
+    );
   });
 
   test("getS3Client creates client with correct configuration", () => {
@@ -133,6 +157,8 @@ suite("S3 Client Tests", () => {
             return "";
           case "secretAccessKey":
             return "";
+          case "allowHttp":
+            return false; // default
           default:
             return defaultValue;
         }
